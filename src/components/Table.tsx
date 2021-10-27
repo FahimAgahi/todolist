@@ -53,30 +53,18 @@ const Table: React.FC<TableType> = ({
               <input defaultChecked={row.checked} type="checkbox" />
             </td>
           )}
-
-          {columns.map((column) => (
-            <td
-              key={column.id}
-              className="py-8 font-medium text-gray-900 text-base "
+          <td className="py-8 text-left">{row.tasks}</td>
+          <td className="py-8 text-left">
+            <div
+              className={`${
+                row.status === 'In Progress' ? 'bg-buttonBlue' : 'bg-yellow-500'
+              } px-3 py-2 text-white rounded-full w-fit-content font-bold inline-block`}
             >
-              <div
-                className={`${
-                  row.status === 'In Progress'
-                    ? 'bg-buttonBlue'
-                    : 'bg-yellow-500'
-                } px-3 py-2 text-white rounded-full w-fit-content font-bold`}
-              >
-                {row.status}
-                {/* {column.id === status ?  row.status : } */}
-              </div>
-              {/* {column.name ? column.onRender(row, column.id) : row[column.id]} */}
-            </td>
-          ))}
-          {/* <td></td>
-          <td className="py-8 font-medium text-gray-900 text-base">
-            21 October 2020
+              {row.status}
+            </div>
           </td>
-          <td className="py-8 font-medium text-gray-900 text-base">09:30 am</td> */}
+          <td className="py-8 text-left">{row.date}</td>
+          <td className="py-8 text-left">{row.time}</td>
 
           {withAction && (
             <td className="py-8 font-medium text-gray-900 text-base ">
