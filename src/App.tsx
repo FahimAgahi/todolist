@@ -6,13 +6,12 @@ import Table from './components/Table';
 
 const App: React.FC = () => {
   const [statusTab, setStatusTab] = useState<number>(0);
-  const [dayTab, setDayTab] = useState<number>(0);
-
   const handleStatusTab = (val: number): number => {
     setStatusTab(val);
     return val;
   };
 
+  const [dayTab, setDayTab] = useState<number>(0);
   const handleDayTab = (val: number): number => {
     setDayTab(val);
     return val;
@@ -21,12 +20,14 @@ const App: React.FC = () => {
 
   const rows = [
     {
+      checked: true,
       tasks: 'Task #1',
       status: 'paused',
       date: '21 October 2020',
       time: '09:30 am',
     },
     {
+      checked: false,
       tasks: 'Task #2',
       status: 'In Progress',
       date: '22 October 2020',
@@ -66,7 +67,7 @@ const App: React.FC = () => {
     <Main>
       <div className="py-12 container mx-auto">
         <div className={'relative mb-10'}>
-          <Button className=" right-0 -top-8">
+          <Button className="absolute right-0 -top-8">
             <svg
               className="text-white text-opacity-70 mr-4"
               xmlns="http://www.w3.org/2000/svg"
@@ -81,48 +82,58 @@ const App: React.FC = () => {
             </svg>
             Add Task
           </Button>
+
+          <div>
+            <ul className="flex items-center text-center text-gray-400  border-b border-black  border-gray-400  w-full">
+              <li
+                className={`w-48 cursor-pointer rounded-t-md mr-1 py-4 border border-black  border-b-0 relative  ${
+                  statusTab === 0
+                    ? 'bg-white text-primary font-medium'
+                    : 'bg-gray-100'
+                }`}
+              >
+                <button
+                  className="w-full"
+                  onClick={(): number => handleStatusTab(0)}
+                >
+                  To Do
+                </button>
+                {
+                  statusTab === 0 && (
+                    <div className="h-px bg-white w-full absolute left-0 w-full -bottom-px" />
+                  ) /* the white line beneath the ToDo */
+                }
+              </li>
+              <li
+                className={`w-48 cursor-pointer rounded-t-md mr-1 py-4 border border-black border-b-0 relative ${
+                  statusTab === 1
+                    ? 'bg-white text-primary font-medium'
+                    : 'bg-gray-100'
+                }`}
+              >
+                <button
+                  className="w-full"
+                  onClick={(): number => handleStatusTab(1)}
+                >
+                  Done Tasks
+                </button>
+
+                {
+                  statusTab === 1 && (
+                    <div className="h-px bg-white w-full absolute left-0 w-full -bottom-px" />
+                  ) /* the white line beneath the DoneTask */
+                }
+              </li>
+            </ul>
+          </div>
         </div>
+
         <div className={'flex item-center justify-end'}>
           <ButtonGroup
             tabs={tabs}
             value={dayTab}
-            onClick={(): number => handleDayTab(0)}
+            onClick={(): number => handleDayTab(1)}
           ></ButtonGroup>
-        </div>
-        <div>
-          <ul className="flex items-center text-center border-b border-black border-opacity-10 w-full">
-            <li
-              className={`w-48 cursor-pointer rounded-t-md mr-1 py-4 border border-black border-opacity-10 border-b-0 relative  ${
-                statusTab === 0
-                  ? 'bg-white text-primary font-medium'
-                  : 'bg-gray-50'
-              }`}
-            >
-              <button onClick={(): number => handleStatusTab(0)}>To Do</button>
-              {
-                statusTab === 0 && (
-                  <div className="h-px bg-white w-full absolute left-0 w-full -bottom-px" />
-                ) /* the white line beneath the ToDo */
-              }
-            </li>
-            <li
-              className={`w-48 cursor-pointer rounded-t-md mr-1 py-4 border border-black border-opacity-10 border-b-0 relative ${
-                statusTab === 1
-                  ? 'bg-white text-primary font-medium'
-                  : 'bg-gray-50'
-              }`}
-            >
-              <button onClick={(): number => handleStatusTab(0)}>
-                Done Tasks
-              </button>
-
-              {
-                statusTab === 1 && (
-                  <div className="h-px bg-white w-full absolute left-0 w-full -bottom-px" />
-                ) /* the white line beneath the DoneTask */
-              }
-            </li>
-          </ul>
         </div>
         <div className="mt-4 ml-4 mt-12">
           <Table rows={rows} columns={columns} withCheckBox withAction />
@@ -133,3 +144,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+// not changing between day tabs

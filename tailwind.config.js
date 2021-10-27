@@ -27,7 +27,7 @@ module.exports = {
       pink: colors.pink,
       'primary': '#5582EF',
       'secondary':'#F8F8F8',
-      
+      'buttonBlue':'#1984B8',
     },
     spacing: {
       px: '1px',

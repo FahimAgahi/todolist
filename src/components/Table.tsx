@@ -6,6 +6,7 @@ type TableType = {
   withAction: boolean;
   columns: { id: string; name: string; desktopWidth: string }[];
   rows: {
+    checked: boolean;
     tasks: string;
     status: string;
     date: string;
@@ -20,7 +21,7 @@ const Table: React.FC<TableType> = ({
 }) => {
   return (
     <table className="border-t border-black w-full border-opacity-10">
-      <tr className="w-full border-b border-black border-opacity-10 text-left ">
+      <tr className="w-full border-b border-black  text-left ">
         {withCheckBox && (
           <th
             key={'checkbox'}
@@ -38,48 +39,49 @@ const Table: React.FC<TableType> = ({
         {withAction && (
           <th
             key={'action'}
-            className="w-2/12 py-5 text-gray-500 font-normal text-base"
+            className="w-2/12 py-5 text-gray-500 font-normal text-base "
           />
         )}
       </tr>
       {rows.map((row, i) => (
         <tr
           key={i}
-          className="w-full text-left text-gray-500 font-normal text-base border-b border-black border-opacity-10"
+          className="w-full text-left text-gray-500 font-normal text-base border-b border-black"
         >
           {withCheckBox && (
             <td className="py-8 text-center">
-              <input type="checkbox" />
+              <input defaultChecked={row.checked} type="checkbox" />
             </td>
           )}
 
           {columns.map((column) => (
             <td
               key={column.id}
-              className="py-8 font-medium text-gray-900 text-base"
+              className="py-8 font-medium text-gray-900 text-base "
             >
               <div
                 className={`${
-                  row.status === 'In Progress' ? 'bg-blue-600' : 'bg-yellow-500'
+                  row.status === 'In Progress'
+                    ? 'bg-buttonBlue'
+                    : 'bg-yellow-500'
                 } px-3 py-2 text-white rounded-full w-fit-content font-bold`}
               >
                 {row.status}
+                {/* {column.id === status ?  row.status : } */}
               </div>
-              {/* {column.name 
-                ? column.onRender(row, column.id)
-                : row[column.id]} */}
+              {/* {column.name ? column.onRender(row, column.id) : row[column.id]} */}
             </td>
           ))}
-          {/*<td>*/}
-
-          {/*</td>*/}
-          {/*<td className="py-8 font-medium text-gray-900 text-base">21 October 2020</td>*/}
-          {/*<td className="py-8 font-medium text-gray-900 text-base">09:30 am</td>*/}
+          {/* <td></td>
+          <td className="py-8 font-medium text-gray-900 text-base">
+            21 October 2020
+          </td>
+          <td className="py-8 font-medium text-gray-900 text-base">09:30 am</td> */}
 
           {withAction && (
-            <td className="py-8 font-medium text-gray-900 text-base">
+            <td className="py-8 font-medium text-gray-900 text-base ">
               <div className="flex items-center justify-center">
-                <button className="w-12 h-12 rounded-full flex items-center justify-center hover:bg-black hover:bg-opacity-4">
+                <button className="w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 ">
                   <svg
                     className="text-blue-500"
                     xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +96,7 @@ const Table: React.FC<TableType> = ({
                     />
                   </svg>
                 </button>
-                <button className="w-12 h-12 rounded-full flex items-center justify-center hover:bg-black hover:bg-opacity-4">
+                <button className="w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-100">
                   <svg
                     className="text-red-500"
                     width="32px"
