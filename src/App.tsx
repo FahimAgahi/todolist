@@ -49,13 +49,6 @@ const App: React.FC = () => {
       id: 'date',
       name: 'Date',
       desktopWidth: '2/12',
-      // onRender:(data:String) => {
-      //     return(
-      //         <>
-      //             {data}
-      //         </>
-      //     )
-      // }
     },
     {
       id: 'time',
@@ -86,14 +79,14 @@ const App: React.FC = () => {
           <div>
             <ul className="flex items-center text-center text-gray-400  border-b border-black  border-gray-400  w-full">
               <li
-                className={`w-48 cursor-pointer rounded-t-md mr-1 py-4 border border-black  border-b-0 relative  ${
+                className={`w-48 cursor-pointer rounded-t-md mr-1  border border-black  border-b-0 relative  ${
                   statusTab === 0
                     ? 'bg-white text-primary font-medium'
                     : 'bg-gray-100'
                 }`}
               >
                 <button
-                  className="w-full"
+                  className="w-full py-4"
                   onClick={(): number => handleStatusTab(0)}
                 >
                   To Do
@@ -105,14 +98,14 @@ const App: React.FC = () => {
                 }
               </li>
               <li
-                className={`w-48 cursor-pointer rounded-t-md mr-1 py-4 border border-black border-b-0 relative ${
+                className={`w-48 cursor-pointer rounded-t-md mr-1 border border-black border-b-0 relative ${
                   statusTab === 1
                     ? 'bg-white text-primary font-medium'
                     : 'bg-gray-100'
                 }`}
               >
                 <button
-                  className="w-full"
+                  className="w-full py-4"
                   onClick={(): number => handleStatusTab(1)}
                 >
                   Done Tasks
