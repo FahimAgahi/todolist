@@ -3,9 +3,9 @@ import React from 'react';
 type ButtonGroupType = {
   tabs: string[];
   value: number;
-  onClick: React.MouseEventHandler;
+  setDayTab: React.Dispatch<React.SetStateAction<number>>;
 };
-const ButtonGroup: React.FC<ButtonGroupType> = ({ tabs, value, onClick }) => {
+const ButtonGroup: React.FC<ButtonGroupType> = ({ tabs, value, setDayTab }) => {
   return (
     <div className="border border-black  w-fit-content rounded-md ">
       <ul className="flex items-center">
@@ -16,7 +16,7 @@ const ButtonGroup: React.FC<ButtonGroupType> = ({ tabs, value, onClick }) => {
               i !== tabs.length - 1 && 'border-r border-black '
             } ${value === i && 'text-primary'}`}
           >
-            <button onClick={onClick}>{item}</button>
+            <button onClick={(): void => setDayTab(i)}>{item}</button>
           </li>
         ))}
       </ul>

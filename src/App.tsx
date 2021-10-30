@@ -12,28 +12,37 @@ const App: React.FC = () => {
   };
 
   const [dayTab, setDayTab] = useState<number>(0);
-  const handleDayTab = (val: number): number => {
-    setDayTab(val);
-    return val;
-  };
-  const tabs = ['Month', 'Week', 'Day'];
 
-  const rows = [
+  const tabs = ['Month', 'Week', 'Day'];
+  type Row = {
+    id: string;
+    tasks: string;
+    status: string;
+    date: string;
+    time: string;
+    checked: boolean;
+  };
+
+  const rows: Row[] = [
     {
-      checked: true,
+      id: Date.now().toString(),
       tasks: 'Task #1',
       status: 'paused',
       date: '21 October 2020',
       time: '09:30 am',
+      checked: true,
     },
     {
-      checked: false,
+      id: Date.now().toString(),
       tasks: 'Task #2',
       status: 'In Progress',
       date: '22 October 2020',
       time: '10:30 am',
+      checked: false,
     },
   ];
+  //const [todoList, setTodoList] = useState<Row[]>(rows);
+
   const columns = [
     {
       id: 'tasks',
@@ -125,7 +134,8 @@ const App: React.FC = () => {
           <ButtonGroup
             tabs={tabs}
             value={dayTab}
-            onClick={(): number => handleDayTab(1)}
+            setDayTab={setDayTab}
+            //onClick={(): number => handleDayTab(1)}
           ></ButtonGroup>
         </div>
         <div className="mt-4 ml-4 mt-12">
