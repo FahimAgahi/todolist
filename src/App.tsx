@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Main from './layout/Main';
 import Button from './components/Button';
 import ButtonGroup from './components/ButtonGroup';
@@ -30,7 +30,7 @@ const App: React.FC = () => {
       status: 'paused',
       date: '21 October 2020',
       time: '09:30',
-      checked: true,
+      checked: false,
     },
     {
       id: (Date.now() + 1).toString(),
@@ -68,18 +68,7 @@ const App: React.FC = () => {
       setModalOpen(false);
     }
   };
-  const convertDate = (input: Row): string => {
-    const date = new Date(input.date);
-    const today = date.toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-    return today;
-  };
-  // const exportDate = (){
 
-  // }
   const [rows, setRows] = useState<Row[]>(staticRows);
   const addNewRow = (): void => {
     setRows([
@@ -100,12 +89,37 @@ const App: React.FC = () => {
     setData(d);
     setIsEditMode(true);
     setModalOpen(true);
+    setRows(rows.filter((row) => d.id !== row.id));
   };
+
   const onDeleteAction = (id: string): void => {
     setRows(rows.filter((row) => id !== row.id));
   };
+
   const [dayTab, setDayTab] = useState<number>(0);
   const tabs = ['Month', 'Week', 'Day'];
+
+  const [filterRows, setFilterRows] = useState<Row[]>([]);
+  useEffect(() => {
+    // filter row with statusTab
+    let filter = [];
+    if (statusTab === 0) {
+      filter = rows.filter((item) => item.checked === false);
+    } else {
+      filter = rows.filter((item) => item.checked === true);
+    }
+    setFilterRows(filter);
+  }, [statusTab, rows]);
+
+  const convertDate = (input: Row): string => {
+    const date = new Date(input.date);
+    const today = date.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+    return today;
+  };
 
   const columns = [
     {
@@ -204,10 +218,11 @@ const App: React.FC = () => {
         </div>
         <div className="mt-4 ml-4 mt-12">
           <Table
-            rows={rows}
+            rows={filterRows}
             columns={columns}
             onEditAction={onEditAction}
             onDeleteAction={onDeleteAction}
+            // onChecked={onChecked}
             withCheckBox
             withAction
           />
