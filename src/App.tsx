@@ -33,7 +33,7 @@ const App: React.FC = () => {
       checked: true,
     },
     {
-      id: Date.now().toString(),
+      id: (Date.now() + 1).toString(),
       tasks: 'Task #2',
       status: 'In Progress',
       date: '21 October 2020',
@@ -100,6 +100,9 @@ const App: React.FC = () => {
     setData(d);
     setIsEditMode(true);
     setModalOpen(true);
+  };
+  const onDeleteAction = (id: string): void => {
+    setRows(rows.filter((row) => id !== row.id));
   };
   const [dayTab, setDayTab] = useState<number>(0);
   const tabs = ['Month', 'Week', 'Day'];
@@ -204,6 +207,7 @@ const App: React.FC = () => {
             rows={rows}
             columns={columns}
             onEditAction={onEditAction}
+            onDeleteAction={onDeleteAction}
             withCheckBox
             withAction
           />
