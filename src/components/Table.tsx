@@ -1,23 +1,20 @@
 import React from 'react';
 import propTypes from 'prop-types';
+import { Row } from '../App';
 
 type TableType = {
   withCheckBox: boolean;
   withAction: boolean;
   columns: { id: string; name: string; desktopWidth: string }[];
-  rows: {
-    checked: boolean;
-    tasks: string;
-    status: string;
-    date: string;
-    time: string;
-  }[];
+  rows: Row[];
+  onEditAction: (d: Row) => void;
 };
 const Table: React.FC<TableType> = ({
   withCheckBox,
   withAction,
   columns,
   rows,
+  onEditAction,
 }) => {
   return (
     <table className="border-t border-black w-full border-opacity-10">
@@ -46,7 +43,7 @@ const Table: React.FC<TableType> = ({
       {rows.map((row, i) => (
         <tr
           key={i}
-          className="w-full text-left text-gray-500 font-normal text-base border-b border-black"
+          className="w-full text-left text-black font-normal text-base border-b border-black"
         >
           {withCheckBox && (
             <td className="py-8 text-center">
@@ -69,7 +66,10 @@ const Table: React.FC<TableType> = ({
           {withAction && (
             <td className="py-8 font-medium text-gray-900 text-base ">
               <div className="flex items-center justify-center">
-                <button className="w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 ">
+                <button
+                  className="w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 "
+                  onClick={(): void => onEditAction(row)}
+                >
                   <svg
                     className="text-blue-500"
                     xmlns="http://www.w3.org/2000/svg"

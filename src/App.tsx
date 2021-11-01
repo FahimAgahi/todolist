@@ -3,45 +3,106 @@ import Main from './layout/Main';
 import Button from './components/Button';
 import ButtonGroup from './components/ButtonGroup';
 import Table from './components/Table';
+import Modal from './components/Modal';
 
+export type Row = {
+  id: string;
+  tasks: string;
+  status: string;
+  date: string;
+  time: string;
+  checked: boolean;
+};
 const App: React.FC = () => {
   const [statusTab, setStatusTab] = useState<number>(0);
   const handleStatusTab = (val: number): number => {
     setStatusTab(val);
     return val;
   };
-
-  const [dayTab, setDayTab] = useState<number>(0);
-
-  const tabs = ['Month', 'Week', 'Day'];
-  type Row = {
-    id: string;
-    tasks: string;
-    status: string;
-    date: string;
-    time: string;
-    checked: boolean;
+  const handleData = (key: string, value: string): void => {
+    setData({ ...data, [key]: value });
   };
 
-  const rows: Row[] = [
+  const staticRows: Row[] = [
     {
       id: Date.now().toString(),
       tasks: 'Task #1',
       status: 'paused',
       date: '21 October 2020',
-      time: '09:30 am',
+      time: '09:30',
       checked: true,
     },
     {
       id: Date.now().toString(),
       tasks: 'Task #2',
       status: 'In Progress',
-      date: '22 October 2020',
-      time: '10:30 am',
+      date: '21 October 2020',
+      time: '10:30',
       checked: false,
     },
   ];
-  //const [todoList, setTodoList] = useState<Row[]>(rows);
+
+  const [isAddModalOpen, setModalOpen] = useState<boolean>(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [data, setData] = useState<Row>({
+    id: '',
+    tasks: '',
+    status: '',
+    date: '',
+    time: '',
+    checked: false,
+  });
+  const handleModal = (val: boolean): void => {
+    if (val) {
+      setModalOpen(val);
+    } else {
+      setData({
+        id: '',
+        tasks: '',
+        status: '',
+        date: '',
+        time: '',
+        checked: false,
+      });
+      setIsEditMode(false);
+      setModalOpen(false);
+    }
+  };
+  const convertDate = (input: Row): string => {
+    const date = new Date(input.date);
+    const today = date.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+    return today;
+  };
+  // const exportDate = (){
+
+  // }
+  const [rows, setRows] = useState<Row[]>(staticRows);
+  const addNewRow = (): void => {
+    setRows([
+      ...rows,
+      {
+        id: Date.now().toString(),
+        tasks: data.tasks,
+        status: data.status,
+        date: convertDate(data),
+        time: data.time,
+        checked: false,
+      },
+    ]);
+    handleModal(false);
+  };
+
+  const onEditAction = (d: Row): void => {
+    setData(d);
+    setIsEditMode(true);
+    setModalOpen(true);
+  };
+  const [dayTab, setDayTab] = useState<number>(0);
+  const tabs = ['Month', 'Week', 'Day'];
 
   const columns = [
     {
@@ -69,7 +130,10 @@ const App: React.FC = () => {
     <Main>
       <div className="py-12 container mx-auto">
         <div className={'relative mb-10'}>
-          <Button className="absolute right-0 -top-8">
+          <Button
+            className="absolute right-0 -top-8"
+            onClick={(): void => handleModal(true)}
+          >
             <svg
               className="text-white text-opacity-70 mr-4"
               xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +148,6 @@ const App: React.FC = () => {
             </svg>
             Add Task
           </Button>
-
           <div>
             <ul className="flex items-center text-center text-gray-400  border-b border-black  border-gray-400  w-full">
               <li
@@ -95,7 +158,7 @@ const App: React.FC = () => {
                 }`}
               >
                 <button
-                  className="w-full py-4"
+                  className="w-full py-3"
                   onClick={(): number => handleStatusTab(0)}
                 >
                   To Do
@@ -114,12 +177,11 @@ const App: React.FC = () => {
                 }`}
               >
                 <button
-                  className="w-full py-4"
+                  className="w-full py-3"
                   onClick={(): number => handleStatusTab(1)}
                 >
                   Done Tasks
                 </button>
-
                 {
                   statusTab === 1 && (
                     <div className="h-px bg-white w-full absolute left-0 w-full -bottom-px" />
@@ -135,16 +197,96 @@ const App: React.FC = () => {
             tabs={tabs}
             value={dayTab}
             setDayTab={setDayTab}
-            //onClick={(): number => handleDayTab(1)}
           ></ButtonGroup>
         </div>
         <div className="mt-4 ml-4 mt-12">
-          <Table rows={rows} columns={columns} withCheckBox withAction />
+          <Table
+            rows={rows}
+            columns={columns}
+            onEditAction={onEditAction}
+            withCheckBox
+            withAction
+          />
         </div>
+        {isAddModalOpen && (
+          <Modal
+            isAddModalOpen={isAddModalOpen}
+            handleModal={handleModal}
+            className=""
+          >
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1 block">
+                  Task Name :{' '}
+                  <input
+                    value={data?.tasks}
+                    onChange={(e): void => handleData('tasks', e.target.value)}
+                    className="border rounded-md py-2 px-4 outline-none border-black "
+                    placeholder={'Example: Task #1'}
+                  />
+                </label>
+              </div>
+              <div>
+                <label className="mb-1 block">
+                  Status :{' '}
+                  <select
+                    defaultValue={data?.status}
+                    onBlur={(e): void => handleData('status', e.target.value)}
+                    className="border w-full bg-white rounded-md py-2 px-4 outline-none border-black "
+                  >
+                    <option value={'In Progress'}>In Progress</option>
+                    <option value={'Paused'}>Paused</option>
+                  </select>{' '}
+                </label>
+              </div>
+              <div>
+                <label className="mb-1 block">
+                  Date :{' '}
+                  <div className="">
+                    <input
+                      className="border-2 rounded-md px-3 py-2 outline-none focus:border-gray-400 flex-grow"
+                      value={data?.date}
+                      onChange={(e): void => handleData('date', e.target.value)}
+                      type="date"
+                      form="DD-MM-YYYY"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div>
+                <label className="mb-1 block">
+                  Time :
+                  <input
+                    value={data?.time}
+                    onChange={(e): void => handleData('time', e.target.value)}
+                    type={'time'}
+                    className="w-full border rounded-md py-2 px-4 outline-none border-blue"
+                    placeholder={'__:__'}
+                  />{' '}
+                </label>
+              </div>
+            </div>
+            <div className="flex mt-4 w-full items-center justify-end">
+              <button
+                onClick={(): void => handleModal(false)}
+                className="border border-black  rounded-lg py-2 px-4"
+              >
+                Close
+              </button>
+              <button
+                className="bg-primary disabled:bg-gray-500 rounded-lg py-2 px-5 text-white ml-4"
+                disabled={!data?.time || !data?.status || !data?.tasks}
+                // doesn't let the user to save the info unless all of the properties are filled.
+                onClick={addNewRow}
+              >
+                {isEditMode ? 'Edit' : 'Add'}
+              </button>
+            </div>
+          </Modal>
+        )}
       </div>
     </Main>
   );
 };
 
 export default App;
-// not changing between day tabs

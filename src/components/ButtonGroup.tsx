@@ -7,7 +7,7 @@ type ButtonGroupType = {
 };
 const ButtonGroup: React.FC<ButtonGroupType> = ({ tabs, value, setDayTab }) => {
   return (
-    <div className="border border-black  w-fit-content rounded-md ">
+    <div className="border border-black w-fit-content rounded-md ">
       <ul className="flex items-center">
         {tabs.map((item, i) => (
           <li
