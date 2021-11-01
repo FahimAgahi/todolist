@@ -7,8 +7,10 @@ type TableType = {
   withAction: boolean;
   columns: { id: string; name: string; desktopWidth: string }[];
   rows: Row[];
+  backUpRows: Row[];
   onEditAction: (d: Row) => void;
   onDeleteAction: (id: string) => void;
+  setRows: React.Dispatch<React.SetStateAction<Row[]>>;
 };
 
 const Table: React.FC<TableType> = ({
@@ -18,7 +20,21 @@ const Table: React.FC<TableType> = ({
   rows,
   onEditAction,
   onDeleteAction,
+  setRows,
+  backUpRows,
 }) => {
+  const changeStatus = (rowInput: Row): void => {
+    setRows(
+      rows.map((row) =>
+        row.id === rowInput.id
+          ? {
+              ...row,
+              checked: !row.checked,
+            }
+          : row,
+      ),
+    );
+  };
   return (
     <table className="border-t border-black w-full border-opacity-10">
       <tr className="w-full border-b border-black  text-left ">
@@ -43,7 +59,7 @@ const Table: React.FC<TableType> = ({
           />
         )}
       </tr>
-      {rows.map((row, i) => (
+      {backUpRows.map((row, i) => (
         <tr
           key={i}
           className="w-full text-left text-black font-normal text-base border-b border-black"
@@ -53,7 +69,7 @@ const Table: React.FC<TableType> = ({
               <input
                 type="checkbox"
                 checked={row.checked}
-                onChange={(): boolean => !row.checked}
+                onChange={(): void => changeStatus(row)}
               />
             </td>
           )}

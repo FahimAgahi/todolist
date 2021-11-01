@@ -224,7 +224,9 @@ const App: React.FC = () => {
         </div>
         <div className="mt-4 ml-4 mt-12">
           <Table
-            rows={backUpRows}
+            backUpRows={backUpRows}
+            rows={rows}
+            setRows={setRows}
             columns={columns}
             onEditAction={onEditAction}
             onDeleteAction={onDeleteAction}
