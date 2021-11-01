@@ -8,6 +8,7 @@ type TableType = {
   columns: { id: string; name: string; desktopWidth: string }[];
   rows: Row[];
   onEditAction: (d: Row) => void;
+  onDeleteAction: (id: string) => void;
 };
 const Table: React.FC<TableType> = ({
   withCheckBox,
@@ -15,6 +16,7 @@ const Table: React.FC<TableType> = ({
   columns,
   rows,
   onEditAction,
+  onDeleteAction,
 }) => {
   return (
     <table className="border-t border-black w-full border-opacity-10">
@@ -84,7 +86,10 @@ const Table: React.FC<TableType> = ({
                     />
                   </svg>
                 </button>
-                <button className="w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-100">
+                <button
+                  className="w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-100"
+                  onClick={(): void => onDeleteAction(row.id)}
+                >
                   <svg
                     className="text-red-500"
                     width="32px"
