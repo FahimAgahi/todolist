@@ -9,8 +9,8 @@ type TableType = {
   rows: Row[];
   onEditAction: (d: Row) => void;
   onDeleteAction: (id: string) => void;
-  //onChecked: (b: boolean) => void;
 };
+
 const Table: React.FC<TableType> = ({
   withCheckBox,
   withAction,
@@ -18,7 +18,6 @@ const Table: React.FC<TableType> = ({
   rows,
   onEditAction,
   onDeleteAction,
-  // onChecked,
 }) => {
   return (
     <table className="border-t border-black w-full border-opacity-10">
@@ -52,9 +51,9 @@ const Table: React.FC<TableType> = ({
           {withCheckBox && (
             <td className="py-8 text-center">
               <input
-                defaultChecked={row.checked}
-                //onChange={(e): void => onChecked(e.target.checked)}
                 type="checkbox"
+                checked={row.checked}
+                onChange={(): boolean => !row.checked}
               />
             </td>
           )}
