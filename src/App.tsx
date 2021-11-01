@@ -27,7 +27,7 @@ const App: React.FC = () => {
     {
       id: Date.now().toString(),
       tasks: 'Task #1',
-      status: 'paused',
+      status: 'Paused',
       date: '21 October 2020',
       time: '09:30',
       checked: false,
@@ -84,12 +84,30 @@ const App: React.FC = () => {
     ]);
     handleModal(false);
   };
-
+  const [backUpRows, setBackUpRows] = useState<Row[]>(rows);
+  useEffect(() => {
+    if (statusTab === 0) {
+      setBackUpRows(rows.filter((row) => (!row.checked ? row : null)));
+    } else {
+      setBackUpRows(rows.filter((row) => (row.checked ? row : null)));
+    }
+  }, [rows, statusTab]);
+  const [isEditClicked, setEditClicked] = useState<boolean>(false);
+  const editRow = (d: Row): void => {
+    if (isEditMode) {
+      setEditClicked(true);
+      setRows([...rows.filter((row) => d.id !== row.id), d]);
+    } else {
+      setEditClicked(false);
+      addNewRow();
+    }
+    setModalOpen(false);
+  };
   const onEditAction = (d: Row): void => {
     setData(d);
     setIsEditMode(true);
     setModalOpen(true);
-    setRows(rows.filter((row) => d.id !== row.id));
+    setEditClicked(isEditClicked);
   };
 
   const onDeleteAction = (id: string): void => {
@@ -98,18 +116,6 @@ const App: React.FC = () => {
 
   const [dayTab, setDayTab] = useState<number>(0);
   const tabs = ['Month', 'Week', 'Day'];
-
-  const [filterRows, setFilterRows] = useState<Row[]>([]);
-  useEffect(() => {
-    // filter row with statusTab
-    let filter = [];
-    if (statusTab === 0) {
-      filter = rows.filter((item) => item.checked === false);
-    } else {
-      filter = rows.filter((item) => item.checked === true);
-    }
-    setFilterRows(filter);
-  }, [statusTab, rows]);
 
   const convertDate = (input: Row): string => {
     const date = new Date(input.date);
@@ -218,11 +224,10 @@ const App: React.FC = () => {
         </div>
         <div className="mt-4 ml-4 mt-12">
           <Table
-            rows={filterRows}
+            rows={backUpRows}
             columns={columns}
             onEditAction={onEditAction}
             onDeleteAction={onDeleteAction}
-            // onChecked={onChecked}
             withCheckBox
             withAction
           />
@@ -296,7 +301,7 @@ const App: React.FC = () => {
                 className="bg-primary disabled:bg-gray-500 rounded-lg py-2 px-5 text-white ml-4"
                 disabled={!data?.time || !data?.status || !data?.tasks}
                 // doesn't let the user to save the info unless all of the properties are filled.
-                onClick={addNewRow}
+                onClick={(): void => editRow(data)}
               >
                 {isEditMode ? 'Edit' : 'Add'}
               </button>
