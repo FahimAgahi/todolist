@@ -77,7 +77,7 @@ const App: React.FC = () => {
         id: Date.now().toString(),
         tasks: data.tasks,
         status: data.status,
-        date: convertDate(data),
+        date: convertDateToString(data),
         time: data.time,
         checked: false,
       },
@@ -92,19 +92,24 @@ const App: React.FC = () => {
       setBackUpRows(rows.filter((row) => (row.checked ? row : null)));
     }
   }, [rows, statusTab]);
+
   const [isEditClicked, setEditClicked] = useState<boolean>(false);
   const editRow = (d: Row): void => {
     if (isEditMode) {
       setEditClicked(true);
-      setRows([...rows.filter((row) => d.id !== row.id), d]);
+      setRows([
+        ...rows.filter((row) => d.id !== row.id),
+        { ...d, date: convertDateToString(d) },
+      ]);
     } else {
       setEditClicked(false);
       addNewRow();
     }
     setModalOpen(false);
   };
+
   const onEditAction = (d: Row): void => {
-    setData(d);
+    setData({ ...d, date: convertStringToDate(d) });
     setIsEditMode(true);
     setModalOpen(true);
     setEditClicked(isEditClicked);
@@ -115,9 +120,10 @@ const App: React.FC = () => {
   };
 
   const [dayTab, setDayTab] = useState<number>(0);
+
   const tabs = ['Month', 'Week', 'Day'];
 
-  const convertDate = (input: Row): string => {
+  const convertDateToString = (input: Row): string => {
     const date = new Date(input.date);
     const today = date.toLocaleDateString('en-GB', {
       day: 'numeric',
@@ -125,6 +131,63 @@ const App: React.FC = () => {
       year: 'numeric',
     });
     return today;
+  };
+  const convertStringToDate = (input: Row): string => {
+    const date = new Date(input.date);
+    const tempDate = date.toLocaleDateString('fr-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    return tempDate;
+  };
+  const [filterRows, setFilterRows] = useState<Row[]>(rows);
+  const setFilterList = (i: number): void => {
+    if (i === 0) {
+      filterDate(0);
+      setDayTab(0);
+    } else if (i === 1) {
+      filterDate(1);
+      setDayTab(1);
+    } else if (i === 2) {
+      filterDate(2);
+      setDayTab(2);
+    }
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const filterDate = (index: number): any => {
+    const current = new Date();
+    setFilterRows(
+      filterRows.map((row) => {
+        const date = convertStringToDate(row);
+        if (current.getFullYear().toString() === date.split('-')[2]) {
+          switch (index) {
+            case 0:
+              if (current.getMonth().toString() === date.split('-')[0]) {
+                return row;
+              }
+              break;
+            case 1:
+              if (
+                current.getDay() < parseInt(date.split('-')[1]) &&
+                parseInt(date.split('-')[1]) < current.getDay() + 7
+              ) {
+                return row;
+              }
+              break;
+            case 2:
+              if (
+                current.getDay().toString() === date.split('-')[1] &&
+                current.getMonth().toString() === date.split('-')[0]
+              ) {
+                return row;
+              }
+          }
+        }
+        return row;
+      }),
+    );
   };
 
   const columns = [
@@ -217,9 +280,9 @@ const App: React.FC = () => {
 
         <div className={'flex item-center justify-end'}>
           <ButtonGroup
+            setFilterList={setFilterList}
             tabs={tabs}
             value={dayTab}
-            setDayTab={setDayTab}
           ></ButtonGroup>
         </div>
         <div className="mt-4 ml-4 mt-12">
