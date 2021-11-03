@@ -11,6 +11,8 @@ type TableType = {
   onEditAction: (d: Row) => void;
   onDeleteAction: (id: string) => void;
   setRows: React.Dispatch<React.SetStateAction<Row[]>>;
+  setFilterRows: React.Dispatch<React.SetStateAction<Row[]>>;
+  filterRows: Row[];
 };
 
 const Table: React.FC<TableType> = ({
@@ -21,9 +23,29 @@ const Table: React.FC<TableType> = ({
   onEditAction,
   onDeleteAction,
   setRows,
+  setFilterRows,
+  filterRows,
   backUpRows,
 }) => {
   const changeStatus = (rowInput: Row): void => {
+    setFilterRows(
+      filterRows.map((row) =>
+        row.id === rowInput.id &&
+        (row.status === 'In Progress' || row.status === 'Paused')
+          ? {
+              ...row,
+              checked: !row.checked,
+              status: 'Done',
+            }
+          : row.id === rowInput.id && row.status === 'Done'
+          ? {
+              ...row,
+              checked: !row.checked,
+              status: 'In Progress',
+            }
+          : row,
+      ),
+    );
     setRows(
       rows.map((row) =>
         row.id === rowInput.id &&

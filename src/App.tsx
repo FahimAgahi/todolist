@@ -68,9 +68,10 @@ const App: React.FC = () => {
       setModalOpen(false);
     }
   };
-
-  const [rows, setRows] = useState<Row[]>(staticRows);
-  const addNewRow = (): void => {
+  const getRows = (
+    setRows: React.Dispatch<React.SetStateAction<Row[]>>,
+    rows: Row[],
+  ): void => {
     setRows([
       ...rows,
       {
@@ -82,6 +83,11 @@ const App: React.FC = () => {
         checked: false,
       },
     ]);
+  };
+  const [rows, setRows] = useState<Row[]>(staticRows);
+  const addNewRow = (): void => {
+    getRows(setFilterRows, filterRows);
+    getRows(setRows, rows);
     handleModal(false);
   };
   const [backUpRows, setBackUpRows] = useState<Row[]>(rows);
@@ -142,8 +148,13 @@ const App: React.FC = () => {
 
     return tempDate;
   };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filterRows, setFilterRows] = useState<Row[]>(rows);
+  const [isFilterClicked, setFilterClicked] = useState<boolean>(false);
   const setFilterList = (i: number): void => {
+    // eslint-disable-next-line no-console
+    console.log(filterRows);
+    setFilterClicked(true);
     if (i === 0) {
       filterDate(0);
       setDayTab(0);
@@ -158,8 +169,10 @@ const App: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const filterDate = (index: number): any => {
     const current = new Date();
+    // eslint-disable-next-line no-console
+    console.log(current.getDate());
     setFilterRows(
-      filterRows.map((row) => {
+      rows.map((row) => {
         const date = convertStringToDate(row);
         if (current.getFullYear().toString() === date.split('-')[2]) {
           switch (index) {
@@ -170,15 +183,15 @@ const App: React.FC = () => {
               break;
             case 1:
               if (
-                current.getDay() < parseInt(date.split('-')[1]) &&
-                parseInt(date.split('-')[1]) < current.getDay() + 7
+                current.getDate() < parseInt(date.split('-')[1]) &&
+                parseInt(date.split('-')[1]) < current.getDate() + 7
               ) {
                 return row;
               }
               break;
             case 2:
               if (
-                current.getDay().toString() === date.split('-')[1] &&
+                current.getDate().toString() === date.split('-')[1] &&
                 current.getMonth().toString() === date.split('-')[0]
               ) {
                 return row;
@@ -286,16 +299,33 @@ const App: React.FC = () => {
           ></ButtonGroup>
         </div>
         <div className="mt-4 ml-4 mt-12">
-          <Table
-            backUpRows={backUpRows}
-            rows={rows}
-            setRows={setRows}
-            columns={columns}
-            onEditAction={onEditAction}
-            onDeleteAction={onDeleteAction}
-            withCheckBox
-            withAction
-          />
+          {isFilterClicked ? (
+            <Table
+              backUpRows={filterRows}
+              rows={rows}
+              filterRows={filterRows}
+              setRows={setRows}
+              setFilterRows={setFilterRows}
+              columns={columns}
+              onEditAction={onEditAction}
+              onDeleteAction={onDeleteAction}
+              withCheckBox
+              withAction
+            />
+          ) : (
+            <Table
+              backUpRows={backUpRows}
+              rows={rows}
+              filterRows={filterRows}
+              setRows={setRows}
+              setFilterRows={setFilterRows}
+              columns={columns}
+              onEditAction={onEditAction}
+              onDeleteAction={onDeleteAction}
+              withCheckBox
+              withAction
+            />
+          )}
         </div>
         {isAddModalOpen && (
           <Modal
